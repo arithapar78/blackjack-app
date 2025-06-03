@@ -780,6 +780,319 @@
             if (gameButtons) gameButtons.style.display = section === 'playing' ? 'flex' : 'none';
             if (newGameSection) newGameSection.style.display = section === 'gameOver' ? 'block' : 'none';
         }
+
+        // Game logic functions
+        function createDeck() {
+            const deck = [];
+            suits.forEach(suit => {
+                ranks.forEach(rank => {
+                    deck.push({ suit, rank });
+                });
+            });
+            
+            // Apply luck to deck shuffling - higher luck gives better card distribution
+            const shuffledDeck = deck.sort(() => Math.random() - 0.5);
+            
+            if (gameData.luck > 0) {
+                // With luck, slightly favor higher value cards in accessible positions
+                const luckFactor = gameData.luck / 100;
+                const highCards = shuffledDeck.filter(card => 
+                    ['10', 'J', 'Q', 'K', 'A'].includes(card.rank)
+                );
+                
+                // Randomly promote some high cards to earlier positions
+                for (let i = 0; i < Math.floor(highCards.length * luckFactor * 0.3); i++) {
+                    if (Math.random() < luckFactor) {
+                        const highCard = highCards.splice(Math.floor(Math.random() * highCards.length), 1)[0];
+                        shuffledDeck.splice(Math.floor(Math.random() * 20), 0, highCard);
+                    }
+                }
+            }
+            
+            return shuffledDeck;
+        }
+
+        function applyLuckToCard(cards, needsHighCard = false) {
+            if (gameData.luck === 0) return cards.pop();
+            
+            const luckChance = gameData.luck / 100;
+            
+            if (needsHighCard && Math.random() < luckChance * 0.6) {
+                // Try to give a high value card
+                const highCards = cards.filter(card => 
+                    ['10', 'J', 'Q', 'K', 'A'].includes(card.rank)
+                );
+                if (highCards.length > 0) {
+                    const randomHigh = highCards[Math.floor(Math.random() * highCards.length)];
+                    const index = cards.indexOf(randomHigh);
+                    return cards.splice(index, 1)[0];
+                }
+            }
+            
+            return cards.pop();
+        }
+
+        function dealerShouldBust() {
+            // Higher luck increases chance dealer will bust when player is in good position
+            const luckChance = gameData.luck / 100;
+            const playerValue = calculateHandValue(gameData.playerCards);
+            
+            if (playerValue >= 17 && playerValue <= 20) {
+                return Math.random() < luckChance * 0.4;
+            }
+            return false;
+        }
+
+        // Main game functions
+        function startGame() {
+            const betInput = document.getElementById('bet-input');
+            if (!betInput) return;
+            
+            gameData.bet = Math.max(1, Math.min(gameData.money, parseInt(betInput.value) || 1));
+            
+            if (gameData.bet > gameData.money) {
+                setMessage('Not enough money for that bet!');
+                return;
+            }
+            
+            if (gameData.money <= 0) {
+                setMessage('You\'re out of money! Visit the shop to get lucky and win some back!');
+                return;
+            }
+            
+            gameData.deck = createDeck();
+            
+            // Deal initial cards with luck consideration
+            const playerNeedsGood = Math.random() < 0.3; // 30% chance to prioritize good cards
+            gameData.playerCards = [
+                applyLuckToCard(gameData.deck, playerNeedsGood),
+                applyLuckToCard(gameData.deck, playerNeedsGood)
+            ];
+            gameData.dealerCards = [gameData.deck.pop(), gameData.deck.pop()];
+            gameData.gameState = 'playing';
+            gameData.canDouble = true;
+            
+            // Reduce luck games remaining
+            if (gameData.gamesRemaining > 0) {
+                gameData.gamesRemaining--;
+                if (gameData.gamesRemaining === 0) {
+                    gameData.luck = 0;
+                    setMessage('Your luck has worn off! Visit the shop to renew it.');
+                    setTimeout(() => {
+                        setMessage(`Your hand: ${calculateHandValue(gameData.playerCards)}. Choose your action!`);
+                    }, 2000);
+                }
+            }
+            
+            updateDisplay();
+            showSection('playing');
+            
+            const playerValue = calculateHandValue(gameData.playerCards);
+            if (playerValue === 21) {
+                const dealerValue = calculateHandValue(gameData.dealerCards);
+                if (dealerValue === 21) {
+                    setMessage('Push! Both have blackjack!');
+                    gameData.gameState = 'gameOver';
+                    showSection('gameOver');
+                } else {
+                    setMessage('🎉 BLACKJACK! You win big!');
+                    gameData.money += Math.floor(gameData.bet * 1.5);
+                    gameData.gameState = 'gameOver';
+                    updateDisplay();
+                    showSection('gameOver');
+                }
+            } else {
+                setMessage(`Your hand: ${playerValue}. Choose your action!`);
+            }
+            
+            // Update double down button availability
+            const doubleBtn = document.getElementById('double-btn');
+            if (doubleBtn) doubleBtn.disabled = gameData.bet * 2 > gameData.money;
+        }
+
+        function hit() {
+            const playerValue = calculateHandValue(gameData.playerCards);
+            const needsLowCard = playerValue >= 15; // Need low card to avoid bust
+            
+            const newCard = applyLuckToCard(gameData.deck, !needsLowCard);
+            gameData.playerCards.push(newCard);
+            gameData.canDouble = false;
+            
+            const newPlayerValue = calculateHandValue(gameData.playerCards);
+            updateDisplay();
+            
+            if (newPlayerValue > 21) {
+                setMessage(`💥 Bust! You lose. Your hand: ${newPlayerValue}`);
+                gameData.money -= gameData.bet;
+                gameData.gameState = 'gameOver';
+                updateDisplay();
+                showSection('gameOver');
+            } else if (newPlayerValue === 21) {
+                setMessage('Perfect 21! Standing for you.');
+                dealerPlay();
+            } else {
+                setMessage(`Your hand: ${newPlayerValue}. Hit or Stand?`);
+            }
+        }
+
+        function stand() {
+            dealerPlay();
+        }
+
+        function doubleDown() {
+            if (gameData.bet * 2 > gameData.money) {
+                setMessage('Not enough money to double down!');
+                return;
+            }
+            
+            gameData.bet *= 2;
+            const playerValue = calculateHandValue(gameData.playerCards);
+            const needsLowCard = playerValue >= 15;
+            
+            const newCard = applyLuckToCard(gameData.deck, !needsLowCard);
+            gameData.playerCards.push(newCard);
+            
+            const newPlayerValue = calculateHandValue(gameData.playerCards);
+            updateDisplay();
+            
+            if (newPlayerValue > 21) {
+                setMessage(`💥 Bust after double! You lose. Your hand: ${newPlayerValue}`);
+                gameData.money -= gameData.bet;
+                gameData.gameState = 'gameOver';
+                updateDisplay();
+                showSection('gameOver');
+            } else {
+                setMessage(`Doubled to ${newPlayerValue}. Dealer's turn...`);
+                setTimeout(dealerPlay, 1000);
+            }
+        }
+
+        function dealerPlay() {
+            gameData.gameState = 'dealer';
+            gameData.canDouble = false;
+            showSection('dealer');
+            setMessage('Dealer is playing...');
+            
+            // Enhanced dealer AI with luck consideration
+            let dealerValue = calculateHandValue(gameData.dealerCards);
+            const playerValue = calculateHandValue(gameData.playerCards);
+            
+            // Dealer strategy with luck influence
+            while (dealerValue < 17 || (dealerValue === 17 && dealerShouldBust())) {
+                let newCard;
+                
+                // If luck suggests dealer should bust, give them a higher chance of high cards
+                if (dealerShouldBust() && dealerValue >= 15) {
+                    const highCards = gameData.deck.filter(card => 
+                        getCardValue(card) >= 8
+                    );
+                    if (highCards.length > 0) {
+                        newCard = highCards[Math.floor(Math.random() * highCards.length)];
+                        const index = gameData.deck.indexOf(newCard);
+                        gameData.deck.splice(index, 1);
+                    } else {
+                        newCard = gameData.deck.pop();
+                    }
+                } else {
+                    newCard = gameData.deck.pop();
+                }
+                
+                gameData.dealerCards.push(newCard);
+                dealerValue = calculateHandValue(gameData.dealerCards);
+            }
+            
+            updateDisplay();
+            
+            setTimeout(() => {
+                if (dealerValue > 21) {
+                    setMessage(`🎉 Dealer busts with ${dealerValue}! You win! You: ${playerValue}, Dealer: ${dealerValue}`);
+                    gameData.money += gameData.bet;
+                } else if (dealerValue > playerValue) {
+                    setMessage(`😞 Dealer wins. Dealer: ${dealerValue}, You: ${playerValue}`);
+                    gameData.money -= gameData.bet;
+                } else if (playerValue > dealerValue) {
+                    setMessage(`🎉 You win! You: ${playerValue}, Dealer: ${dealerValue}`);
+                    gameData.money += gameData.bet;
+                } else {
+                    setMessage(`🤝 Push! Both have ${playerValue}`);
+                }
+                
+                gameData.gameState = 'gameOver';
+                updateDisplay();
+                showSection('gameOver');
+                
+                // Check if player is broke
+                if (gameData.money <= 0) {
+                    setTimeout(() => {
+                        setMessage('💸 You\'re broke! Visit the Lucky Shop to try your luck, or start fresh with a new session!');
+                    }, 2000);
+                }
+            }, 1500);
+        }
+
+        function resetGame() {
+            gameData.playerCards = [];
+            gameData.dealerCards = [];
+            gameData.gameState = 'betting';
+            gameData.canDouble = false;
+            gameData.bet = Math.min(10, Math.max(1, gameData.money));
+            
+            const betInput = document.getElementById('bet-input');
+            if (betInput) betInput.value = gameData.bet;
+            updateDisplay();
+            showSection('betting');
+            
+            if (gameData.money <= 0) {
+                setMessage('💸 Out of money! Visit the Lucky Shop or refresh the page to start over.');
+            } else {
+                setMessage('Place your bet for the next round!');
+            }
+        }
+
+        // Save/load functions
+        function saveGame() {
+            try {
+                localStorage.setItem('blackjackSave', JSON.stringify(gameData));
+            } catch (e) {
+                // localStorage not available, continue without saving
+            }
+        }
+
+        function loadGame() {
+            try {
+                const saved = localStorage.getItem('blackjackSave');
+                if (saved) {
+                    const loadedData = JSON.parse(saved);
+                    // Only load money, luck, and games remaining
+                    gameData.money = loadedData.money || 1000;
+                    gameData.luck = loadedData.luck || 0;
+                    gameData.gamesRemaining = loadedData.gamesRemaining || 0;
+                }
+            } catch (e) {
+                // Error loading, use defaults
+            }
+        }
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGame();
+            updateDisplay();
+            showSection('betting');
+            updateShopDisplay();
+
+            // Add visual flair interval
+            setInterval(() => {
+                const luckDisplay = document.querySelector('.luck-display');
+                if (luckDisplay && gameData.luck > 0) {
+                    luckDisplay.classList.add('pulse');
+                } else if (luckDisplay) {
+                    luckDisplay.classList.remove('pulse');
+                }
+            }, 1000);
+
+            // Auto-save every 5 seconds
+            setInterval(saveGame, 5000);
+        });
     </script>
 </head>
 <body>
