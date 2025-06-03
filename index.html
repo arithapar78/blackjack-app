@@ -726,9 +726,10 @@
             
             // Find and activate the correct button
             const buttons = document.querySelectorAll('.nav-btn');
-            if (pageName === 'game' && buttons[0]) buttons[0].classList.add('active');
-            if (pageName === 'instructions' && buttons[1]) buttons[1].classList.add('active');
-            if (pageName === 'shop' && buttons[2]) buttons[2].classList.add('active');
+            if (pageName === 'poker' && buttons[0]) buttons[0].classList.add('active');
+            if (pageName === 'game' && buttons[1]) buttons[1].classList.add('active');
+            if (pageName === 'instructions' && buttons[2]) buttons[2].classList.add('active');
+            if (pageName === 'shop' && buttons[3]) buttons[3].classList.add('active');
             
             // Update shop display when opening shop
             if (pageName === 'shop') {
@@ -1101,7 +1102,8 @@
         <div class="nav-container">
             <div class="logo">🎰 Elite Casino</div>
             <div class="nav-buttons">
-                <button class="nav-btn active" onclick="showPage('game')">🃏 Blackjack</button>
+                <button class="nav-btn" onclick="showPage('poker')">🃏 Poker</button>
+                <button class="nav-btn active" onclick="showPage('game')">🎯 Blackjack</button>
                 <button class="nav-btn" onclick="showPage('instructions')">📚 Instructions</button>
                 <button class="nav-btn" onclick="showPage('shop')">🛒 Lucky Shop</button>
             </div>
@@ -1109,6 +1111,34 @@
     </nav>
 
     <div class="main-container">
+        <!-- Poker Page -->
+        <div id="poker-page" class="page">
+            <div class="game-container">
+                <div class="status-bar">
+                    <div class="money-display">💰 Balance: $<span id="poker-money">1000</span></div>
+                    <div class="luck-display">🍀 Luck: <span id="poker-luck">0</span>%</div>
+                </div>
+                
+                <div class="message" id="poker-message">🃏 Poker coming soon! Stay tuned for Texas Hold'em action!</div>
+                
+                <div style="text-align: center; padding: 40px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🚧</div>
+                    <h2 style="color: #ffd700; margin-bottom: 20px;">Under Construction</h2>
+                    <p style="color: #e5e7eb; font-size: 1.2rem; line-height: 1.6;">
+                        We're working hard to bring you an amazing poker experience!<br>
+                        Features in development:
+                    </p>
+                    <ul style="color: #e5e7eb; text-align: left; max-width: 400px; margin: 20px auto; font-size: 1.1rem;">
+                        <li>🃏 Texas Hold'em</li>
+                        <li>🤖 AI Opponents</li>
+                        <li>💰 Tournament Mode</li>
+                        <li>🍀 Luck Integration</li>
+                        <li>📊 Hand Rankings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- Game Page -->
         <div id="game-page" class="page active">
             <div class="game-container">
