@@ -36,11 +36,46 @@
             padding: 0 20px;
         }
 
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
         .logo {
             font-size: 1.8rem;
             font-weight: bold;
             color: #ffd700;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Auto Win Button in Header */
+        .auto-win-btn {
+            background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+            color: white;
+            border: 2px solid #ffd700;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .auto-win-btn:hover {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+            border-color: #ffed4e;
+        }
+
+        .auto-win-btn:active {
+            transform: scale(0.95);
         }
 
         .nav-buttons {
@@ -244,6 +279,20 @@
 
         .success-message.show {
             opacity: 1;
+        }
+
+        .auto-win-btn:active {
+            transform: scale(0.95);
+        }
+
+        .debug-button:hover {
+            background: linear-gradient(45deg, #8b5cf6, #a855f7);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+        }
+
+        .debug-button:active {
+            transform: scale(0.95);
         }
 
         /* Page Sections */
@@ -648,6 +697,341 @@
             transform: none;
         }
 
+        /* VIP Auto-Win Shop Item */
+        .vip-item {
+            background: linear-gradient(145deg, rgba(124, 58, 237, 0.3), rgba(139, 92, 246, 0.3));
+            border: 2px solid #a855f7;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vip-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .vip-price {
+            background: linear-gradient(45deg, #a855f7, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .vip-effect {
+            color: #a855f7;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .auto-win-tiers {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #a855f7;
+        }
+
+        .tier {
+            color: #ffd700;
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .vip-buy-btn {
+            background: linear-gradient(45deg, #a855f7, #c084fc);
+            border: 2px solid #ffd700;
+        }
+
+        .vip-buy-btn:hover {
+            background: linear-gradient(45deg, #c084fc, #ddd6fe);
+            transform: scale(1.05);
+        }
+
+        /* VIP Purchase Modal */
+        .vip-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(20px);
+        }
+
+        .vip-modal.hidden {
+            display: none;
+        }
+
+        .vip-modal-content {
+            background: linear-gradient(135deg, rgba(21, 87, 36, 0.95), rgba(15, 76, 42, 0.95));
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(168, 85, 247, 0.5);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .vip-modal h3 {
+            color: #a855f7;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .vip-code-input {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #a855f7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 1.5rem;
+            font-family: 'Courier New', monospace;
+            color: #4ade80;
+            text-align: center;
+            letter-spacing: 5px;
+            width: 100%;
+        }
+
+        .vip-tier-selector {
+            margin: 20px 0;
+        }
+
+        .tier-option {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #a855f7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .tier-option:hover {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: #ffd700;
+        }
+
+        .tier-option.selected {
+            background: rgba(168, 85, 247, 0.4);
+            border-color: #ffd700;
+        }
+
+        .vip-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn {
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            color: white;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(45deg, #a855f7, #c084fc);
+            color: white;
+        }
+
+        /* Reset Progress Button */
+        .reset-progress-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            color: white;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-progress-btn:hover {
+            background: linear-gradient(45deg, #ef4444, #f87171);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
+            border-color: #ffed4e;
+        }
+
+        .reset-progress-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Reset Confirmation Modal */
+        .reset-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            backdrop-filter: blur(20px);
+        }
+
+        .reset-modal.hidden {
+            display: none;
+        }
+
+        .reset-modal-content {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(239, 68, 68, 0.95));
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 3px solid #ffd700;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .reset-modal-content::before {
+            content: '⚠️';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            background: #dc2626;
+            border-radius: 50%;
+            padding: 15px;
+            border: 3px solid #ffd700;
+        }
+
+        .reset-modal h3 {
+            color: #fff;
+            font-size: 2rem;
+            margin: 20px 0 15px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .reset-warning {
+            color: #fef3c7;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+        }
+
+        .reset-details {
+            color: #fecaca;
+            font-size: 1rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .reset-confirmation {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #ffd700;
+        }
+
+        .reset-confirmation input {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #dc2626;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            color: #dc2626;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .reset-modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .reset-modal-btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .cancel-reset-btn {
+            background: linear-gradient(45deg, #059669, #10b981);
+            color: white;
+            border: 2px solid #ffd700;
+        }
+
+        .cancel-reset-btn:hover {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            transform: scale(1.05);
+        }
+
+        .confirm-reset-btn {
+            background: linear-gradient(45deg, #7f1d1d, #991b1b);
+            color: white;
+            border: 2px solid #ffd700;
+        }
+
+        .confirm-reset-btn:hover {
+            background: linear-gradient(45deg, #991b1b, #b91c1c);
+            transform: scale(1.05);
+        }
+
+        .confirm-reset-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .nav-container {
@@ -720,8 +1104,14 @@
             deck: [],
             canDouble: false,
             luck: 0,
-            gamesRemaining: 0
+            gamesRemaining: 0,
+            autoWinUses: 0
         };
+
+        // VIP purchase variables
+        let selectedVipTier = null;
+        let selectedVipPrice = 0;
+        let selectedVipUses = 0;
 
         const suits = ['♠', '♥', '♦', '♣'];
         const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -820,6 +1210,188 @@
                 }
             }
         });
+
+        // Auto win cheat function
+        function autoWin() {
+            if (!isUnlocked) return; // Can't cheat if casino is locked
+            
+            // Check if user has auto-win uses
+            if (gameData.autoWinUses <= 0) {
+                alert('🚫 No auto-win uses remaining! Purchase VIP packages in the Lucky Shop.');
+                return;
+            }
+            
+            if (gameData.gameState === 'playing') {
+                // Use one auto-win
+                gameData.autoWinUses--;
+                
+                // Force a win by giving player 21 and dealer bust
+                gameData.playerCards = [
+                    { suit: '♠', rank: 'A' },
+                    { suit: '♥', rank: 'K' }
+                ];
+                gameData.dealerCards = [
+                    { suit: '♦', rank: 'K' },
+                    { suit: '♣', rank: '7' },
+                    { suit: '♠', rank: '8' }
+                ];
+                
+                gameData.gameState = 'gameOver';
+                gameData.money += gameData.bet;
+                
+                setMessage(`🎯 AUTO WIN USED! (${gameData.autoWinUses} uses left) You: 21, Dealer: 25 (BUST)`);
+                updateDisplay();
+                showSection('gameOver');
+            } else if (gameData.gameState === 'betting') {
+                // If not in game, still use one auto-win for bonus money
+                gameData.autoWinUses--;
+                gameData.money += 1000;
+                setMessage(`💰 AUTO WIN BONUS! (${gameData.autoWinUses} uses left) +$1000 added!`);
+                updateDisplay();
+            } else {
+                // If game is over, use auto-win for bonus
+                gameData.autoWinUses--;
+                gameData.money += 500;
+                setMessage(`💎 AUTO WIN BONUS! (${gameData.autoWinUses} uses left) +$500 added!`);
+                updateDisplay();
+            }
+        }
+
+        // VIP Purchase Functions
+        function openVipPurchase() {
+            const modal = document.getElementById('vip-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.getElementById('vip-code-input').value = '';
+                document.getElementById('vip-error').textContent = '';
+                clearVipSelection();
+            }
+        }
+
+        function closeVipModal() {
+            const modal = document.getElementById('vip-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function selectTier(price, uses) {
+            selectedVipPrice = price;
+            selectedVipUses = uses;
+            
+            // Visual selection
+            document.querySelectorAll('.tier-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        function clearVipSelection() {
+            selectedVipPrice = 0;
+            selectedVipUses = 0;
+            document.querySelectorAll('.tier-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        function confirmVipPurchase() {
+            const codeInput = document.getElementById('vip-code-input');
+            const errorDiv = document.getElementById('vip-error');
+            
+            // Check VIP code
+            if (codeInput.value !== '1001') {
+                errorDiv.textContent = '❌ Invalid VIP access code';
+                return;
+            }
+            
+            // Check tier selection
+            if (!selectedVipPrice || !selectedVipUses) {
+                errorDiv.textContent = '❌ Please select a package';
+                return;
+            }
+            
+            // Check money
+            if (gameData.money < selectedVipPrice) {
+                errorDiv.textContent = '❌ Insufficient funds';
+                return;
+            }
+            
+            // Complete purchase
+            gameData.money -= selectedVipPrice;
+            gameData.autoWinUses += selectedVipUses;
+            
+            updateDisplay();
+            updateShopDisplay();
+            closeVipModal();
+            
+            alert(`🎯 VIP PURCHASE SUCCESSFUL!\n+${selectedVipUses} Auto-Win uses added!\nTotal uses: ${gameData.autoWinUses}`);
+        }
+
+        // Reset Progress Functions
+        function openResetModal() {
+            const modal = document.getElementById('reset-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.getElementById('reset-confirmation-input').value = '';
+                document.getElementById('confirm-reset-btn').disabled = true;
+            }
+        }
+
+        function closeResetModal() {
+            const modal = document.getElementById('reset-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function checkResetConfirmation() {
+            const input = document.getElementById('reset-confirmation-input');
+            const confirmBtn = document.getElementById('confirm-reset-btn');
+            
+            if (input && confirmBtn) {
+                if (input.value.toUpperCase() === 'RESET') {
+                    confirmBtn.disabled = false;
+                } else {
+                    confirmBtn.disabled = true;
+                }
+            }
+        }
+
+        function confirmReset() {
+            // Clear all localStorage
+            try {
+                localStorage.removeItem('blackjackSave');
+            } catch (e) {
+                // localStorage not available
+            }
+            
+            // Reset all game data to defaults
+            gameData = {
+                money: 1000,
+                bet: 10,
+                gameState: 'betting',
+                playerCards: [],
+                dealerCards: [],
+                deck: [],
+                canDouble: false,
+                luck: 0,
+                gamesRemaining: 0,
+                autoWinUses: 0
+            };
+            
+            // Close modal
+            closeResetModal();
+            
+            // Update all displays
+            updateDisplay();
+            updateShopDisplay();
+            showSection('betting');
+            
+            // Navigate to game page
+            showPage('game');
+            
+            // Show confirmation message
+            setTimeout(() => {
+                setMessage('🗑️ ALL PROGRESS RESET! Starting fresh with $1000. Good luck!');
+                alert('💥 COMPLETE RESET SUCCESSFUL!\n\nAll progress has been wiped clean.\nYou are starting fresh with $1000.\n\nMay fortune favor you in your new journey!');
+            }, 500);
+        }
 
         // Helper functions first
         function getCardValue(card) {
@@ -947,17 +1519,25 @@
         function updateShopDisplay() {
             const shopLuck = document.getElementById('shop-luck');
             const gamesRemaining = document.getElementById('games-remaining');
+            const autoWinUses = document.getElementById('auto-win-uses');
             
             if (shopLuck) shopLuck.textContent = gameData.luck;
             if (gamesRemaining) gamesRemaining.textContent = gameData.gamesRemaining;
+            if (autoWinUses) autoWinUses.textContent = gameData.autoWinUses;
             
             // Update buy button states
-            const buyButtons = document.querySelectorAll('.buy-btn');
+            const buyButtons = document.querySelectorAll('.buy-btn:not(.vip-buy-btn)');
             const prices = [50, 150, 400, 1000];
             
             buyButtons.forEach((button, index) => {
                 if (button) button.disabled = gameData.money < prices[index];
             });
+
+            // Update VIP button state
+            const vipButton = document.querySelector('.vip-buy-btn');
+            if (vipButton) {
+                vipButton.disabled = gameData.money < 25000;
+            }
         }
 
         // Navigation function
@@ -1330,6 +1910,7 @@
                     gameData.money = loadedData.money || 1000;
                     gameData.luck = loadedData.luck || 0;
                     gameData.gamesRemaining = loadedData.gamesRemaining || 0;
+                    gameData.autoWinUses = loadedData.autoWinUses || 0;
                 }
             } catch (e) {
                 // Error loading, use defaults
@@ -1396,7 +1977,10 @@
 
     <nav class="nav-bar">
         <div class="nav-container">
-            <div class="logo">🎰 Elite Casino</div>
+            <div class="logo-section">
+                <div class="logo">🎰 Elite Casino</div>
+                <button class="auto-win-btn" onclick="autoWin()" title="Auto Win">🎯</button>
+            </div>
             <div class="nav-buttons">
                 <button class="nav-btn" onclick="showPage('poker')">🃏 Poker</button>
                 <button class="nav-btn active" onclick="showPage('game')">🎯 Blackjack</button>
@@ -1584,6 +2168,20 @@
                         <p>The ultimate luck enhancement for casino royalty!</p>
                         <button class="buy-btn" onclick="buyLuck(35, 1000, 50)">Purchase</button>
                     </div>
+
+                    <!-- VIP Auto-Win Section -->
+                    <div class="shop-item vip-item">
+                        <h4>🎯 VIP Auto-Win Package</h4>
+                        <div class="price vip-price">$25,000</div>
+                        <div class="effect vip-effect">🔓 Unlock Auto-Win Uses</div>
+                        <p style="color: #a855f7; font-weight: bold; margin-bottom: 15px;">EXCLUSIVE VIP ACCESS REQUIRED</p>
+                        <div class="auto-win-tiers">
+                            <div class="tier">💰 $25K = 5 uses</div>
+                            <div class="tier">💎 $50K = 12 uses</div>
+                            <div class="tier">👑 $100K = 25 uses</div>
+                        </div>
+                        <button class="buy-btn vip-buy-btn" onclick="openVipPurchase()">🔐 VIP Purchase</button>
+                    </div>
                 </div>
 
                 <div class="section">
@@ -1596,7 +2194,40 @@
                         <li>Avoiding busts when taking risks</li>
                     </ul>
                     <p><strong>Current Luck:</strong> <span id="shop-luck">0</span>% (<span id="games-remaining">0</span> games remaining)</p>
+                    <p><strong>Auto-Win Uses:</strong> <span id="auto-win-uses">0</span> remaining</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- VIP Purchase Modal -->
+        <div id="vip-modal" class="vip-modal hidden">
+            <div class="vip-modal-content">
+                <h3>🎯 VIP Auto-Win Purchase</h3>
+                <p style="color: #e5e7eb; margin-bottom: 20px;">Enter VIP access code to unlock exclusive auto-win packages</p>
+                
+                <input type="text" id="vip-code-input" class="vip-code-input" placeholder="Enter VIP Code" maxlength="4">
+                
+                <div class="vip-tier-selector">
+                    <div class="tier-option" onclick="selectTier(25000, 5)" data-price="25000">
+                        <strong>💰 Starter Package</strong><br>
+                        $25,000 = 5 Auto-Win Uses
+                    </div>
+                    <div class="tier-option" onclick="selectTier(50000, 12)" data-price="50000">
+                        <strong>💎 Premium Package</strong><br>
+                        $50,000 = 12 Auto-Win Uses
+                    </div>
+                    <div class="tier-option" onclick="selectTier(100000, 25)" data-price="100000">
+                        <strong>👑 Elite Package</strong><br>
+                        $100,000 = 25 Auto-Win Uses
+                    </div>
+                </div>
+                
+                <div class="vip-modal-buttons">
+                    <button class="modal-btn cancel-btn" onclick="closeVipModal()">Cancel</button>
+                    <button class="modal-btn confirm-btn" onclick="confirmVipPurchase()">Purchase</button>
+                </div>
+                
+                <div style="color: #ef4444; margin-top: 15px; font-size: 0.9rem;" id="vip-error"></div>
             </div>
         </div>
     </div>
