@@ -77,6 +77,173 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            transition: filter 0.3s ease;
+        }
+
+        .main-container.blurred {
+            filter: blur(10px);
+            pointer-events: none;
+        }
+
+        /* Security Keypad */
+        .security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+        }
+
+        .security-overlay.hidden {
+            display: none;
+        }
+
+        .keypad-container {
+            background: linear-gradient(135deg, rgba(21, 87, 36, 0.95), rgba(15, 76, 42, 0.95));
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .keypad-title {
+            color: #ffd700;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .keypad-subtitle {
+            color: #e5e7eb;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .code-display {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            font-family: 'Courier New', monospace;
+            color: #4ade80;
+            text-align: center;
+            letter-spacing: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .keypad-btn {
+            background: linear-gradient(145deg, #2d3748, #4a5568);
+            color: white;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .keypad-btn:hover {
+            background: linear-gradient(145deg, #4a5568, #2d3748);
+            border-color: #ffed4e;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .keypad-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .keypad-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .clear-btn {
+            background: linear-gradient(45deg, #dc2626, #ef4444);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: linear-gradient(45deg, #ef4444, #f87171);
+            transform: translateY(-2px);
+        }
+
+        .enter-btn {
+            background: linear-gradient(45deg, #059669, #10b981);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .enter-btn:hover {
+            background: linear-gradient(45deg, #10b981, #34d399);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 1rem;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        .success-message {
+            color: #4ade80;
+            font-size: 1rem;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
         }
 
         /* Page Sections */
@@ -558,6 +725,101 @@
 
         const suits = ['♠', '♥', '♦', '♣'];
         const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
+        // Security system variables
+        let currentCode = '';
+        const correctCode = '0410';
+        let isUnlocked = false;
+
+        // Security keypad functions
+        function addDigit(digit) {
+            if (currentCode.length < 4) {
+                currentCode += digit;
+                updateCodeDisplay();
+            }
+        }
+
+        function clearCode() {
+            currentCode = '';
+            updateCodeDisplay();
+            hideMessages();
+        }
+
+        function updateCodeDisplay() {
+            const codeText = document.getElementById('code-text');
+            if (codeText) {
+                if (currentCode.length === 0) {
+                    codeText.textContent = '••••';
+                } else {
+                    let display = '';
+                    for (let i = 0; i < 4; i++) {
+                        if (i < currentCode.length) {
+                            display += currentCode[i];
+                        } else {
+                            display += '•';
+                        }
+                    }
+                    codeText.textContent = display;
+                }
+            }
+        }
+
+        function hideMessages() {
+            const errorMsg = document.getElementById('error-message');
+            const successMsg = document.getElementById('success-message');
+            if (errorMsg) errorMsg.classList.remove('show');
+            if (successMsg) successMsg.classList.remove('show');
+        }
+
+        function checkCode() {
+            hideMessages();
+            
+            if (currentCode.length !== 4) {
+                showError();
+                return;
+            }
+            
+            if (currentCode === correctCode) {
+                showSuccess();
+                setTimeout(unlockCasino, 1500);
+            } else {
+                showError();
+                setTimeout(clearCode, 1000);
+            }
+        }
+
+        function showError() {
+            const errorMsg = document.getElementById('error-message');
+            if (errorMsg) errorMsg.classList.add('show');
+        }
+
+        function showSuccess() {
+            const successMsg = document.getElementById('success-message');
+            if (successMsg) successMsg.classList.add('show');
+        }
+
+        function unlockCasino() {
+            isUnlocked = true;
+            const overlay = document.getElementById('security-overlay');
+            const mainContainer = document.getElementById('main-container');
+            
+            if (overlay) overlay.classList.add('hidden');
+            if (mainContainer) mainContainer.classList.remove('blurred');
+        }
+
+        // Keyboard support for keypad
+        document.addEventListener('keydown', function(event) {
+            if (!isUnlocked) {
+                const key = event.key;
+                if (key >= '0' && key <= '9') {
+                    addDigit(key);
+                } else if (key === 'Enter') {
+                    checkCode();
+                } else if (key === 'Escape' || key === 'Backspace') {
+                    clearCode();
+                }
+            }
+        });
 
         // Helper functions first
         function getCardValue(card) {
@@ -1097,7 +1359,41 @@
     </script>
 </head>
 <body>
-    <!-- Navigation -->
+    <!-- Security Keypad Overlay -->
+    <div id="security-overlay" class="security-overlay">
+        <div class="keypad-container">
+            <h2 class="keypad-title">🔐 Elite Casino Access</h2>
+            <p class="keypad-subtitle">Enter your VIP access code</p>
+            
+            <div class="code-display" id="code-display">
+                <span id="code-text">••••</span>
+            </div>
+            
+            <div class="keypad-grid">
+                <button class="keypad-btn" onclick="addDigit('1')">1</button>
+                <button class="keypad-btn" onclick="addDigit('2')">2</button>
+                <button class="keypad-btn" onclick="addDigit('3')">3</button>
+                <button class="keypad-btn" onclick="addDigit('4')">4</button>
+                <button class="keypad-btn" onclick="addDigit('5')">5</button>
+                <button class="keypad-btn" onclick="addDigit('6')">6</button>
+                <button class="keypad-btn" onclick="addDigit('7')">7</button>
+                <button class="keypad-btn" onclick="addDigit('8')">8</button>
+                <button class="keypad-btn" onclick="addDigit('9')">9</button>
+                <button class="keypad-btn" onclick="clearCode()">C</button>
+                <button class="keypad-btn" onclick="addDigit('0')">0</button>
+                <button class="keypad-btn" onclick="checkCode()">✓</button>
+            </div>
+            
+            <div class="keypad-controls">
+                <button class="clear-btn" onclick="clearCode()">🗑️ Clear</button>
+                <button class="enter-btn" onclick="checkCode()">🔓 Enter</button>
+            </div>
+            
+            <div class="error-message" id="error-message">❌ Access Denied - Invalid Code</div>
+            <div class="success-message" id="success-message">✅ Access Granted - Welcome to Elite Casino!</div>
+        </div>
+    </div>
+
     <nav class="nav-bar">
         <div class="nav-container">
             <div class="logo">🎰 Elite Casino</div>
@@ -1110,7 +1406,7 @@
         </div>
     </nav>
 
-    <div class="main-container">
+    <div class="main-container blurred" id="main-container">
         <!-- Poker Page -->
         <div id="poker-page" class="page">
             <div class="game-container">
@@ -1460,4 +1756,3 @@
             gameData.dealerCards.forEach((card, index) => {
                 const cardElement = createCardElement(card, gameData.gameState === 'playing' && index === 1);
                 dealerContainer.appendChild(cardElement);
-            
